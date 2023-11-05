@@ -33,7 +33,7 @@ void ParseFromSerialInputValues() {
       int am2 = data2.split(); // Получаем количество данных, внимание, ломает строку!
       if (am2 > 1) { // Если существует не только ключ, а ещё и значение
         String key = data2[0]; // Ключ - первое значение
-        float value = data2.getFloat(1); // Значение - второе
+        float value = data2.getFloat(1); // Значение - второе, или data.getInt(1), чтобы получить целое число
         Serial.println("key: " + key + ", value: " + String(value)); // Вывод
         // Присваивание значений
       }
