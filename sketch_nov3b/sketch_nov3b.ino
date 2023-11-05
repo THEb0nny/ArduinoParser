@@ -5,25 +5,39 @@
 
 void setup() {
   Serial.begin(9600);
-  Serial.setTimeout(1000);
+  Serial.setTimeout(5);
 }
 
 void loop() {
-  ParseSerialInputValues();
+  ParseFromSerialInputValues();
 }
 
 // Парсинг значений из Serial
-void ParseSerialInputValues() {
-    if (Serial.available()) {
-    char inputStr[30];
-    int amount = Serial.readBytesUntil(';', inputStr, 30);
-    inputStr[amount] = NULL;
+void ParseFromSerialInputValues() {
+  if (Serial.available() > 2) { // Если что-то прислали
+    char inputStr[30]; // Массив символов для записи из Serial
+    int amount = Serial.readBytesUntil(';', inputStr, 30); // Считать посимвольно до символа конца пакета точки с запятой и записать количество полученных байт в переменную
+    inputStr[amount] = NULL; // Если отправляющее устройство не отправит нулевой символ, то он не запишется в буффер и вывод строк будет некорректным, решение дописать вручную и т.о. закрываем строку
 
-    GParser data(inputStr, ',');
-    int am = data.split();
+    GParser data(inputStr, ','); // Парсим массив символов по символу запятой
+    int am = data.split(); // Получаем количество данных, внимание, ломает строку!
 
     for (int i = 0; i < am; i++) {
-      Serial.println(data[i]);
+      String tmpStr = data[i];
+      tmpStr.replace(" ", ""); // Удалить пробел, если он был введёт по ошибке
+      char tmpCharArr[tmpStr.length()];
+      tmpStr.toCharArray(tmpCharArr, tmpStr.length() + 1);
+      //Serial.println(String(i) + ") " + tmpStr); // Вывести начальную строку
+
+      GParser data2(tmpCharArr, ':'); // Парсим массив символов по символу запятой
+      int am2 = data2.split(); // Получаем количество данных, внимание, ломает строку!
+      if (am2 > 1) { // Если существует не только ключ, а ещё и значение
+        String key = data2[0]; // Ключ - первое значение
+        float value = data2.getFloat(1); // Значение - второе
+        Serial.println("key: " + key + ", value: " + String(value)); // Вывод
+        // Присваивание значений
+      }
     }
+    Serial.println(); // Перевод на новую строку для разделения значений, которые были введены
   }
 }
