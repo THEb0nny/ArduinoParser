@@ -13,7 +13,7 @@ void loop() {
 }
 
 // Парсинг значений из Serial
-void ParseFromSerialInputValues() {
+void ParseFromSerialInputValues(bool debug) {
   if (Serial.available() > 2) { // Если что-то прислали
     char inputStr[30]; // Массив символов для записи из Serial
     int amount = Serial.readBytesUntil(';', inputStr, 30); // Считать посимвольно до символа конца пакета точки с запятой и записать количество полученных байт в переменную
@@ -27,17 +27,16 @@ void ParseFromSerialInputValues() {
       tmpStr.replace(" ", ""); // Удалить пробел, если он был введёт по ошибке
       char tmpCharArr[tmpStr.length()];
       tmpStr.toCharArray(tmpCharArr, tmpStr.length() + 1);
-      //Serial.println(String(i) + ") " + tmpStr); // Вывести начальную строку
-
+      if (debug) Serial.println(String(i) + ") " + tmpStr); // Вывести начальную строку
       GParser data2(tmpCharArr, ':'); // Парсим массив символов по символу запятой
       int am2 = data2.split(); // Получаем количество данных, внимание, ломает строку!
       if (am2 > 1) { // Если существует не только ключ, а ещё и значение
         String key = data2[0]; // Ключ - первое значение
         float value = data2.getFloat(1); // Значение - второе, или data.getInt(1), чтобы получить целое число
-        Serial.println("key: " + key + ", value: " + String(value)); // Вывод
+        if (debug) Serial.println("key: " + key + ", value: " + String(value)); // Вывод
         // Присваивание значений
       }
     }
-    Serial.println(); // Перевод на новую строку для разделения значений, которые были введены
+    if (debug) Serial.println(); // Перевод на новую строку для разделения значений, которые были введены
   }
 }
