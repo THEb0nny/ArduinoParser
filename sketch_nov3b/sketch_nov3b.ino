@@ -9,7 +9,7 @@ void setup() {
 }
 
 void loop() {
-  ParseFromSerialInputValues();
+  ParseFromSerialInputValues(true);
 }
 
 // Парсинг значений из Serial
