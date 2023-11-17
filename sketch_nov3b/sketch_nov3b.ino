@@ -4,19 +4,19 @@
 #include <GParser.h>
 
 void setup() {
-  Serial.begin(9600);
-  Serial.setTimeout(5);
+  Serial.begin(115200);
+  Serial.setTimeout(5); // Позволяет задать время ожидания данных
 }
 
 void loop() {
-  ParseFromSerialInputValues(true);
+  ParseFromSerialInputValues(true); // Парсим данные по Serial
 }
 
 // Парсинг значений из Serial
 void ParseFromSerialInputValues(bool debug) {
   if (Serial.available() > 2) { // Если что-то прислали
-    char inputStr[30]; // Массив символов для записи из Serial
-    int amount = Serial.readBytesUntil(';', inputStr, 30); // Считать посимвольно до символа конца пакета точки с запятой и записать количество полученных байт в переменную
+    char inputStr[64]; // Массив символов для записи из Serial
+    int amount = Serial.readBytesUntil(';', inputStr, 64); // Считать посимвольно до символа конца пакета точки с запятой и записать количество полученных байт в переменную
     inputStr[amount] = NULL; // Если отправляющее устройство не отправит нулевой символ, то он не запишется в буффер и вывод строк будет некорректным, решение дописать вручную и т.о. закрываем строку
     GParser data(inputStr, ','); // Парсим массив символов по символу запятой
     int am = data.split(); // Получаем количество данных, внимание, ломает строку!
